@@ -1,0 +1,130 @@
+{
+	"ImportPath": "github.com/truongtu268/real_project",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/araddon/dateparse",
+			"Rev": "e2f3c465e969d5981ef2f7f83e18d266d5df908c"
+		},
+		{
+			"ImportPath": "github.com/dgrijalva/jwt-go",
+			"Comment": "v3.0.0-20-ga539ee1",
+			"Rev": "a539ee1a749a2b895533f979515ac7e6e0f5b650"
+		},
+		{
+			"ImportPath": "github.com/go-playground/locales",
+			"Comment": "v0.11.1-2-g1e5f1161",
+			"Rev": "1e5f1161c6416a5ff48840eb8724a394e48cc534"
+		},
+		{
+			"ImportPath": "github.com/go-playground/locales/currency",
+			"Comment": "v0.11.1-2-g1e5f1161",
+			"Rev": "1e5f1161c6416a5ff48840eb8724a394e48cc534"
+		},
+		{
+			"ImportPath": "github.com/go-playground/universal-translator",
+			"Comment": "v0.16.0-1-g7120149",
+			"Rev": "71201497bace774495daed26a3874fd339e0b538"
+		},
+		{
+			"ImportPath": "github.com/jinzhu/gorm",
+			"Comment": "v1.0-173-gb1885a6",
+			"Rev": "b1885a643b4977c9089d77eb07c0fd96591f94b8"
+		},
+		{
+			"ImportPath": "github.com/jinzhu/gorm/dialects/postgres",
+			"Comment": "v1.0-173-gb1885a6",
+			"Rev": "b1885a643b4977c9089d77eb07c0fd96591f94b8"
+		},
+		{
+			"ImportPath": "github.com/jinzhu/inflection",
+			"Rev": "1c35d901db3da928c72a72d8458480cc9ade058f"
+		},
+		{
+			"ImportPath": "github.com/labstack/echo",
+			"Comment": "3.2.3-7-ga625e58",
+			"Rev": "a625e589cffa33eac768ab98bc21518cef786e2d"
+		},
+		{
+			"ImportPath": "github.com/labstack/echo/middleware",
+			"Comment": "3.2.3-7-ga625e58",
+			"Rev": "a625e589cffa33eac768ab98bc21518cef786e2d"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/bytes",
+			"Comment": "0.2.2",
+			"Rev": "779b8a8b9850a97acba6a3fe20feb628c39e17c1"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/color",
+			"Comment": "0.2.2",
+			"Rev": "779b8a8b9850a97acba6a3fe20feb628c39e17c1"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/log",
+			"Comment": "0.2.2",
+			"Rev": "779b8a8b9850a97acba6a3fe20feb628c39e17c1"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/random",
+			"Comment": "0.2.2",
+			"Rev": "779b8a8b9850a97acba6a3fe20feb628c39e17c1"
+		},
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Comment": "go1.0-cutoff-181-gb77235e",
+			"Rev": "b77235e3890a962fe8a6f8c4c7198679ca7814e7"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/hstore",
+			"Comment": "go1.0-cutoff-181-gb77235e",
+			"Rev": "b77235e3890a962fe8a6f8c4c7198679ca7814e7"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/oid",
+			"Comment": "go1.0-cutoff-181-gb77235e",
+			"Rev": "b77235e3890a962fe8a6f8c4c7198679ca7814e7"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Comment": "v0.0.9-6-gad5389d",
+			"Rev": "ad5389df28cdac544c99bd7b9161a0b5b6ca9d1b"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.2",
+			"Rev": "fc9e8d8ef48496124e79ae0df75490096eccf6fe"
+		},
+		{
+			"ImportPath": "github.com/satori/go.uuid",
+			"Comment": "v1.1.0-8-g5bf94b6",
+			"Rev": "5bf94b69c6b68ee1b541973bb8e1144db23a194b"
+		},
+		{
+			"ImportPath": "github.com/valyala/bytebufferpool",
+			"Rev": "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
+		},
+		{
+			"ImportPath": "github.com/valyala/fasttemplate",
+			"Rev": "dcecefd839c4193db0d35b88ec65b4c12d360ab0"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/acme",
+			"Rev": "7d9177d70076375b9a59c8fde23d52d9c4a7ecd5"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/acme/autocert",
+			"Rev": "7d9177d70076375b9a59c8fde23d52d9c4a7ecd5"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "429f518978ab01db8bb6f44b66785088e7fba58b"
+		},
+		{
+			"ImportPath": "gopkg.in/go-playground/validator.v9",
+			"Comment": "v9.7.0",
+			"Rev": "a021b2ec9a8a8bb970f3f15bc42617cb520e8a64"
+		}
+	]
+}

@@ -1,0 +1,7 @@
+{
+  "host": "localhost",
+  "user": "postgres",
+  "dbname": "testORM",
+  "password": "truongtu268",
+  "migrate": "save"
+}

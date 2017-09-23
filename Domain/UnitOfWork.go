@@ -1,9 +1,9 @@
 package Domain
 
 import (
-	"github.com/truongtu268/real_project/Model"
-	"github.com/truongtu268/real_project/FakeData"
-	"github.com/truongtu268/real_project/Common"
+	"github.com/truongtu268/OAuthServer/Model"
+	"github.com/truongtu268/OAuthServer/FakeData"
+	"github.com/truongtu268/OAuthServer/Common"
 	"reflect"
 	"strings"
 )

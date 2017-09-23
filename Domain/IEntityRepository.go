@@ -1,6 +1,6 @@
 package Domain
 
-import "github.com/truongtu268/real_project/Model"
+import "github.com/truongtu268/OAuthServer/Model"
 
 type Repository interface {
 	Create(user Model.IEntity) error

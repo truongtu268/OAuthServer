@@ -1,7 +1,7 @@
 package FakeData
 
 import (
-	"github.com/truongtu268/real_project/Model"
+	"github.com/truongtu268/OAuthServer/Model"
 	"github.com/araddon/dateparse"
 )
 

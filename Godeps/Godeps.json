@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/truongtu268/real_project",
+	"ImportPath": "github.com/truongtu268/OAuthServer",
 	"GoVersion": "go1.8",
 	"GodepVersion": "v79",
 	"Deps": [

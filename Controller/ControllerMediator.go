@@ -7,8 +7,8 @@ type ControllerMediator struct {
 }
 
 func (mediator *ControllerMediator)InitialMediator(echo *echo.Echo) {
-	mediator.EntityControllers = append(mediator.EntityControllers,
-		NewUserController(echo))
+	//mediator.EntityControllers = append(mediator.EntityControllers,
+	//	NewUserController(echo))
 }
 
 func (mediator *ControllerMediator)Execute() error {

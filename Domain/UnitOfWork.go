@@ -2,8 +2,6 @@ package Domain
 
 import (
 	"github.com/truongtu268/OAuthServer/Model"
-	"github.com/truongtu268/OAuthServer/FakeData"
-	"github.com/truongtu268/OAuthServer/Common"
 	"reflect"
 	"strings"
 )
@@ -24,26 +22,7 @@ func (unit *UnitOfWork) Run() {
 	if unit.Config.Migrate == "drop"{
 		entitylist := []Model.IEntity{}
 		entitylist = append(entitylist,
-			new(Model.User),
-			new(Model.PaymentMethod),
-			new(Model.Store),
-			new(Model.StatusOfShipping),
-			new(Model.ProductCategory),
-			new(Model.Inventory),
-			new(Model.Address),
-			new(Model.WareHouse),
-			new(Model.SecurityInfo),
-			new(Model.Profile),
-			new(Model.TypeRatingCategory),
-			new(Model.Rating),
-			new(Model.LanguageContentEntity),
-			new(Model.BillList),
-			new(Model.Comment),
-			new(Model.Reaction),
-			new(Model.PaymentInfo),
-			new(Model.ShippingInfo),
-			new(Model.StatusOfBill),
-			new(Model.BillItem))
+			new(Model.User),)
 		for _, entity := range entitylist {
 			entityRepo := new(EntityRepository)
 			entityRepo.InitialRepo(entity,unit.Config.Migrate)
@@ -55,22 +34,22 @@ func (unit *UnitOfWork) Run() {
 }
 
 func (unit *UnitOfWork) boostrapData()  {
-	userRepo :=unit.Repositories["RepoUser"]
-	storeRepo :=unit.Repositories["RepoStore"]
-	paymentRepo :=unit.Repositories["RepoPaymentMethod"]
-	for _, value := range FakeData.Users {
-		var user = new(Model.User)
-		Common.MapObject(value,user)
-		userRepo.Create(user)
-	}
-	for _, value := range FakeData.Stores {
-		var user = new(Model.Store)
-		Common.MapObject(value,user)
-		storeRepo.Create(user)
-	}
-	for _, value := range FakeData.PaymentMethod {
-		var user = new(Model.PaymentMethod)
-		Common.MapObject(value,user)
-		paymentRepo.Create(user)
-	}
+	//userRepo :=unit.Repositories["RepoUser"]
+	//storeRepo :=unit.Repositories["RepoStore"]
+	//paymentRepo :=unit.Repositories["RepoPaymentMethod"]
+	//for _, value := range FakeData.Users {
+	//	var user = new(Model.User)
+	//	Common.MapObject(value,user)
+	//	userRepo.Create(user)
+	//}
+	//for _, value := range FakeData.Stores {
+	//	var user = new(Model.Store)
+	//	Common.MapObject(value,user)
+	//	storeRepo.Create(user)
+	//}
+	//for _, value := range FakeData.PaymentMethod {
+	//	var user = new(Model.PaymentMethod)
+	//	Common.MapObject(value,user)
+	//	paymentRepo.Create(user)
+	//}
 }

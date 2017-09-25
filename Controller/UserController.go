@@ -1,15 +1,14 @@
 package Controller
 
 import (
-	"github.com/labstack/echo"
+/*	"github.com/labstack/echo"
 	"github.com/truongtu268/OAuthServer/Domain"
 	"github.com/truongtu268/OAuthServer/Model"
-	"github.com/truongtu268/OAuthServer/Dtos"
 	"net/http"
 	"fmt"
-	"github.com/truongtu268/OAuthServer/Common"
+	"github.com/truongtu268/OAuthServer/Common"*/
 )
-var UserCtrlItems = []ControllerItem{
+/*var UserCtrlItems = []ControllerItem{
 	ControllerItem{
 		Url:"",
 		Method:"Post",
@@ -42,4 +41,4 @@ func NewUserController(e *echo.Echo) *EntityController {
 		userCTR.AddCtrlItem(ctrlItem)
 	}
 	return userCTR
-}
+}*/

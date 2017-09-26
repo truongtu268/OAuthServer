@@ -4,6 +4,7 @@ import (
 	"github.com/truongtu268/OAuthServer/Model"
 	"reflect"
 	"strings"
+	"fmt"
 )
 
 type UnitOfWork struct {
@@ -15,10 +16,11 @@ func (unit*UnitOfWork) AddRepo(repo *EntityRepository, entity Model.IEntity) {
 	var NameRepo = strings.Replace(reflect.TypeOf(entity).String(),"*Model.","Repo",-1)
 	unit.Repositories[NameRepo] = repo
 }
-
+var Config DataConfig
 func (unit *UnitOfWork) Run() {
 	unit.Repositories = make(map[string]*EntityRepository)
-	unit.Config = <- GetConfigFile()
+	Config = unit.Config
+	fmt.Println(unit.Config)
 	if unit.Config.Migrate == "drop"{
 		entitylist := []Model.IEntity{}
 		entitylist = append(entitylist,

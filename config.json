@@ -3,5 +3,95 @@
   "user": "postgres",
   "dbname": "testORM",
   "password": "truongtu268",
-  "migrate": "save"
+  "migrate": "save",
+  "oauth_providers": [
+    {
+      "name": "google",
+      "cid": "251196717827-4oh8dp23ftu0555b905n0coa08lua1km.apps.googleusercontent.com",
+      "csecret": "CWeUqK2JHs_-MefG1A4kG7vt",
+      "callback": "http://127.0.0.1:9090/user/auth/google",
+      "scope": [
+        "https://www.googleapis.com/auth/userinfo.email"
+      ],
+      "client": "https://www.googleapis.com/oauth2/v3/userinfo",
+      "endpoint": {
+        "authurl": "https://accounts.google.com/o/oauth2/auth",
+        "tokenurl": "https://accounts.google.com/o/oauth2/token"
+      }
+    },
+    {
+      "name": "github",
+      "cid": "7fb34f5e3f8a61d5c148",
+      "csecret": "f769509e38a4c0200b2bf7fe97e98534c3bac581",
+      "callback": "http://127.0.0.1:9090/user/auth/github",
+      "scope": [
+        "user",
+        "publicrepo"
+      ],
+      "client": "https://api.github.com/user",
+      "endpoint": {
+        "authurl": "https://github.com/login/oauth/authorize",
+        "tokenurl": "https://github.com/login/oauth/access_token"
+      }
+    },
+    {
+      "name": "facebook",
+      "cid": "1987524178199616",
+      "csecret": "262e2d2f970ba5181373b22fe1b4d1e8",
+      "callback": "http://127.0.0.1:9090/user/auth/facebook",
+      "scope": [
+        "public_profile",
+        "user_friends"
+      ],
+      "client": "https://graph.facebook.com/me?fields=email,first_name,last_name,link,about,id,name,picture,location",
+      "endpoint": {
+        "authurl": "https://www.facebook.com/dialog/oauth",
+        "tokenurl": "https://graph.facebook.com/oauth/access_token"
+      }
+    },
+    {
+      "name": "instagram",
+      "cid": "1987524178199616",
+      "csecret": "262e2d2f970ba5181373b22fe1b4d1e8",
+      "callback": "http://127.0.0.1:9090/user/auth/facebook",
+      "scope": [
+        "public_profile",
+        "user_friends"
+      ],
+      "client": "https://graph.facebook.com/me?fields=email,first_name,last_name,link,about,id,name,picture,location",
+      "endpoint": {
+        "authurl": "https://www.facebook.com/dialog/oauth",
+        "tokenurl": "https://graph.facebook.com/oauth/access_token"
+      }
+    },
+    {
+      "name": "twitter",
+      "cid": "yJXNqhehlwtAl2qYmObcc3hXc",
+      "csecret": "HkBl4xVVQacLsmmZF5DQWSgGmBFrLDsUQVv3JDRMvRuCLRa8Eo",
+      "callback": "http://127.0.0.1:9090/user/auth/twitter",
+      "scope": [
+        "user",
+        "publicrepo"
+      ],
+      "client": "https://api.github.com/user",
+      "endpoint": {
+        "authurl": "https://accounts.google.com/o/oauth2/auth",
+        "tokenurl": "https://accounts.google.com/o/oauth2/token"
+      }
+    },
+    {
+      "name": "instagram",
+      "cid": "cb1d9f05d80e4a2c821c2916499c4b82",
+      "csecret": "907debf7db834c2594b595de45ae533b",
+      "callback": "http://127.0.0.1:9090/user/auth/instagram",
+      "scope": [
+        "basic"
+      ],
+      "client": "https://api.instagram.com/v1/users/self",
+      "endpoint": {
+        "authurl": "https://api.instagram.com/oauth/authorize",
+        "tokenurl": "https://api.instagram.com/oauth/access_token"
+      }
+    }
+  ]
 }

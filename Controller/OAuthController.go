@@ -2,7 +2,6 @@ package Controller
 
 import (
 	"github.com/labstack/echo"
-	"github.com/truongtu268/OAuthServer/Domain"
 	"github.com/truongtu268/OAuthServer/Service"
 )
 var OAuthService *Service.OAuthService
@@ -40,11 +39,28 @@ var UsersControllerItem = []ControllerItem{
 			return githubProvider.LoginFunc(context)
 		},
 	},
+	ControllerItem{
+		Url:"auth/instagram",
+		Method:"Get",
+		HandlerFunc: func(context echo.Context) error {
+			githubProvider := OAuthService.GetService("instagram")
+			return githubProvider.OAuthFunc(context)
+		},
+	},
+	ControllerItem{
+		Url:"login/instagram",
+		Method:"Get",
+		HandlerFunc: func(context echo.Context) error {
+			githubProvider := OAuthService.GetService("instagram")
+			return githubProvider.LoginFunc(context)
+		},
+	},
 }
-func NewOAuthController(e *echo.Echo, conf Domain.DataConfig) *EntityController {
+func NewOAuthController(e *echo.Echo) *EntityController {
 	entityCtrl := new(EntityController)
 	entityCtrl.intialEntityController(e,"user")
-	OAuthService = Service.NewOAuthService(conf)
+	OAuthService = Service.NewOAuthService()
+
 	for _, ctrlItem := range UsersControllerItem {
 		entityCtrl.AddCtrlItem(ctrlItem)
 	}

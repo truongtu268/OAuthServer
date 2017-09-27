@@ -4,7 +4,8 @@ import (
 	"github.com/truongtu268/OAuthServer/Model"
 	"reflect"
 	"strings"
-	"fmt"
+	"github.com/truongtu268/OAuthServer/FakeData"
+	"github.com/truongtu268/OAuthServer/Common"
 )
 
 type UnitOfWork struct {
@@ -20,11 +21,12 @@ var Config DataConfig
 func (unit *UnitOfWork) Run() {
 	unit.Repositories = make(map[string]*EntityRepository)
 	Config = unit.Config
-	fmt.Println(unit.Config)
 	if unit.Config.Migrate == "drop"{
 		entitylist := []Model.IEntity{}
 		entitylist = append(entitylist,
-			new(Model.User),)
+			new(Model.Provider),
+			new(Model.User),
+			new(Model.TokenOauth),)
 		for _, entity := range entitylist {
 			entityRepo := new(EntityRepository)
 			entityRepo.InitialRepo(entity,unit.Config.Migrate)
@@ -36,22 +38,10 @@ func (unit *UnitOfWork) Run() {
 }
 
 func (unit *UnitOfWork) boostrapData()  {
-	//userRepo :=unit.Repositories["RepoUser"]
-	//storeRepo :=unit.Repositories["RepoStore"]
-	//paymentRepo :=unit.Repositories["RepoPaymentMethod"]
-	//for _, value := range FakeData.Users {
-	//	var user = new(Model.User)
-	//	Common.MapObject(value,user)
-	//	userRepo.Create(user)
-	//}
-	//for _, value := range FakeData.Stores {
-	//	var user = new(Model.Store)
-	//	Common.MapObject(value,user)
-	//	storeRepo.Create(user)
-	//}
-	//for _, value := range FakeData.PaymentMethod {
-	//	var user = new(Model.PaymentMethod)
-	//	Common.MapObject(value,user)
-	//	paymentRepo.Create(user)
-	//}
+	providerRepo :=unit.Repositories["RepoProvider"]
+	for _, value := range FakeData.Providers {
+		var user = new(Model.Provider)
+		Common.MapObject(value,user)
+		providerRepo.Create(user)
+	}
 }

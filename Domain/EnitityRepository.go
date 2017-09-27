@@ -27,14 +27,6 @@ func (useRepo *EntityRepository) Delete(id string, user Model.IEntity) error {
 	return nil
 }
 
-func (userRepo *EntityRepository) Find(users [] Model.IEntity) error {
-	dbResult := userRepo.db.Find(users)
-	if dbResult.Error != nil {
-		return dbResult.Error
-	}
-	return nil
-}
-
 func (userRepo *EntityRepository) FindOne(id string, user Model.IEntity) error {
 	dbResult := userRepo.db.Where("id=?",id).First(user)
 	if dbResult.Error != nil {
@@ -58,8 +50,4 @@ func (userRepo *EntityRepository)InitialTable() error {
 	}
 	userRepo.db.CreateTable(userRepo.entity)
 	return nil
-}
-
-type UserRepository struct {
-	EntityRepository
 }

@@ -2,22 +2,13 @@ package Service
 
 import (
 	"github.com/labstack/echo"
-	"github.com/truongtu268/OAuthServer/Domain"
-	"fmt"
-	"io/ioutil"
 	"golang.org/x/oauth2"
 	"net/http"
-	"errors"
 	"crypto/rand"
 	"encoding/base64"
+	"github.com/truongtu268/OAuthServer/Model"
+	"github.com/truongtu268/OAuthServer/Domain"
 )
-
-
-type IOAuthService interface {
-	OAuthFunc(e echo.Context) error
-	LoginFunc(e echo.Context) error
-	InitialFunc(conf Domain.Provider)
-}
 
 func randToken() string {
 	b := make([]byte, 32)
@@ -25,50 +16,50 @@ func randToken() string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
-type ProviderAuth struct {
-	Provider Domain.Provider
-	Conf oauth2.Config
+var serviceLocator *ServiceLocateForStorageUserAndToken
+var userRepo *Domain.UserRepo
+var tokenRepo *Domain.TokenOauthRepo
+
+type IOAuthService interface {
+	OAuthFunc(e echo.Context) error
+	LoginFunc(e echo.Context) error
+	InitialFunc(provider Model.Provider)
 }
 
-func (googleOAuth *ProviderAuth)OAuthFunc(context echo.Context) error {
-	queryState := context.QueryParam("state")
-	fmt.Println(queryState)
+type ProviderAuth struct {
+	Provider Model.Provider
+	Conf     oauth2.Config
+}
+
+func (googleOAuth *ProviderAuth) OAuthFunc(context echo.Context) error {
 	code := context.QueryParam("code")
-	tok, err := googleOAuth.Conf.Exchange(oauth2.NoContext, code)
+	err,serviceStorage := serviceLocator.GetOAuthStorageData(googleOAuth.Provider.Name)
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, errors.New("Some thing wrong with token"))
+		return context.JSON(http.StatusInternalServerError, err)
 	}
-	fmt.Println("token",tok.AccessToken)
-	fmt.Println("refeshtoken",tok.RefreshToken)
-	fmt.Println(tok.Expiry)
-	fmt.Println(tok.TokenType)
-	client := googleOAuth.Conf.Client(oauth2.NoContext, tok)
-	userinfo, err := client.Get(googleOAuth.Provider.Client)
+	err,user :=serviceStorage.CreateDataUserAndTokenToDataBase(googleOAuth,code,userRepo, tokenRepo)
 	if err != nil {
-		return context.JSON(http.StatusInternalServerError, errors.New("Some thing wrong with userinfo"))
+		return context.JSON(http.StatusInternalServerError, err)
 	}
-	defer userinfo.Body.Close()
-	data, _ := ioutil.ReadAll(userinfo.Body)
-	return context.JSON(http.StatusOK,string(data))
+	return context.JSON(http.StatusOK, user)
 }
 
 func (googleOAuth *ProviderAuth) LoginFunc(context echo.Context) error {
 	state := randToken()
-	fmt.Println(state)
 	link := googleOAuth.Conf.AuthCodeURL(state)
 	return context.JSON(http.StatusOK, link)
 }
 
-func (googleOAuth *ProviderAuth) InitialFunc(config Domain.Provider) {
-	googleOAuth.Provider = config
+func (googleOAuth *ProviderAuth) InitialFunc(provider Model.Provider) {
+	googleOAuth.Provider = provider
 	googleOAuth.Conf = oauth2.Config{
 		ClientID:     googleOAuth.Provider.Cid,
 		ClientSecret: googleOAuth.Provider.Csecret,
 		RedirectURL:  googleOAuth.Provider.Callback,
-		Scopes: googleOAuth.Provider.Scope,
+		Scopes:       googleOAuth.Provider.Scope,
 		Endpoint: oauth2.Endpoint{
-			AuthURL: googleOAuth.Provider.EndPoint.AuthURL,
-			TokenURL: googleOAuth.Provider.EndPoint.TokenURL,
+			AuthURL:  googleOAuth.Provider.AuthURL,
+			TokenURL: googleOAuth.Provider.TokenURL,
 		},
 	}
 }
@@ -77,18 +68,27 @@ type OAuthService struct {
 	oauthService map[string]IOAuthService
 }
 
-func (service *OAuthService)AddService(provider IOAuthService, name string)  {
+func (service *OAuthService) AddService(provider IOAuthService, name string) {
 	service.oauthService[name] = provider
 }
 
-func (service *OAuthService)GetService(providerName string) IOAuthService {
+func (service *OAuthService) GetService(providerName string) IOAuthService {
 	return service.oauthService[providerName]
 }
 
-func NewOAuthService(config Domain.DataConfig) *OAuthService {
+func NewOAuthService() *OAuthService {
+	providerRepo := new(Domain.ProviderRepo)
+	userRepo = new(Domain.UserRepo)
+	tokenRepo = new(Domain.TokenOauthRepo)
+	providerRepo.InitialRepo(new(Model.Provider), "")
+	userRepo.InitialRepo(new(Model.User),"")
+	tokenRepo.InitialRepo(new(Model.TokenOauth),"")
+	serviceLocator = NewServiceLocateForStorageData()
 	service := new(OAuthService)
 	service.oauthService = make(map[string]IOAuthService)
-	for _, providerConf := range config.OauthProviders {
+	providerList := new([]Model.Provider)
+	providerRepo.Find(providerList)
+	for _, providerConf := range *providerList {
 		provider := new(ProviderAuth)
 		provider.InitialFunc(providerConf)
 		service.AddService(provider, providerConf.Name)

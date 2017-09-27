@@ -12,13 +12,12 @@ func main() {
 	e := echo.New()
 	customValidator := Common.NewCustomValidator()
 	e.Validator = customValidator
-	Config := <- Domain.GetConfigFile()
 	unit := new(Domain.UnitOfWork)
-	unit.Config = Config
+	unit.Config = <- Domain.GetConfigFile()
 	unit.Run()
 	e.Use(middleware.Logger())
 	mediator := new(Controller.ControllerMediator)
-	mediator.InitialMediator(e,Config)
+	mediator.InitialMediator(e)
 	mediator.Execute()
 	e.Logger.Fatal(e.Start(":9090"))
 }

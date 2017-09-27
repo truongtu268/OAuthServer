@@ -20,3 +20,8 @@ func (entity *Entity) BeforeCreate(scope *gorm.Scope) error {
 	return nil
 }
 
+func (user *Entity) BeforeUpdate(scope gorm.Scope) error {
+	scope.SetColumn("UpdatedAt", time.Now())
+	return nil
+}
+

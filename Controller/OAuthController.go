@@ -3,6 +3,7 @@ package Controller
 import (
 	"github.com/labstack/echo"
 	"github.com/truongtu268/OAuthServer/Service"
+	"github.com/truongtu268/OAuthServer/Middleware"
 )
 var oauthService *Service.OAuthService
 var state string
@@ -56,9 +57,9 @@ var usersControllerItem = []ControllerItem{
 		},
 	},
 }
-func NewOAuthController(e *echo.Echo) *EntityController {
+func NewOAuthController(e *echo.Echo, validatorLocate *NewMiddleware.ValidatorLocate) *EntityController {
 	entityCtrl := new(EntityController)
-	entityCtrl.intialEntityController(e,"user")
+	entityCtrl.intialEntityController(e,"user", validatorLocate)
 	oauthService = Service.NewOAuthService()
 
 	for _, ctrlItem := range usersControllerItem {

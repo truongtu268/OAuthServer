@@ -2,6 +2,7 @@ package Controller
 
 import (
 	"github.com/labstack/echo"
+	"github.com/truongtu268/OAuthServer/Middleware"
 )
 
 type ControllerMediator struct {
@@ -9,9 +10,10 @@ type ControllerMediator struct {
 }
 
 func (mediator *ControllerMediator)InitialMediator(echo *echo.Echo) {
+	validatorLocate:= NewMiddleware.NewValidatorLocation()
 	mediator.EntityControllers = append(mediator.EntityControllers,
-		NewOAuthController(echo),
-		NewPrivateController(echo),)
+		NewOAuthController(echo, validatorLocate),
+		NewPrivateController(echo, validatorLocate),)
 }
 
 func (mediator *ControllerMediator)Execute() error {

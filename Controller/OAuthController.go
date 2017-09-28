@@ -4,14 +4,14 @@ import (
 	"github.com/labstack/echo"
 	"github.com/truongtu268/OAuthServer/Service"
 )
-var OAuthService *Service.OAuthService
+var oauthService *Service.OAuthService
 var state string
-var UsersControllerItem = []ControllerItem{
+var usersControllerItem = []ControllerItem{
 	ControllerItem{
 		Url:"auth/github",
 		Method:"Get",
 		HandlerFunc: func(context echo.Context) error {
-			githubProvider := OAuthService.GetService("github")
+			githubProvider := oauthService.GetService("github")
 			return githubProvider.OAuthFunc(context)
 		},
 	},
@@ -19,7 +19,7 @@ var UsersControllerItem = []ControllerItem{
 		Url:"login/github",
 		Method:"Get",
 		HandlerFunc: func(context echo.Context) error {
-			githubProvider := OAuthService.GetService("github")
+			githubProvider := oauthService.GetService("github")
 			return githubProvider.LoginFunc(context)
 		},
 	},
@@ -27,7 +27,7 @@ var UsersControllerItem = []ControllerItem{
 		Url:"auth/google",
 		Method:"Get",
 		HandlerFunc: func(context echo.Context) error {
-			githubProvider := OAuthService.GetService("google")
+			githubProvider := oauthService.GetService("google")
 			return githubProvider.OAuthFunc(context)
 		},
 	},
@@ -35,7 +35,7 @@ var UsersControllerItem = []ControllerItem{
 		Url:"login/google",
 		Method:"Get",
 		HandlerFunc: func(context echo.Context) error {
-			githubProvider := OAuthService.GetService("google")
+			githubProvider := oauthService.GetService("google")
 			return githubProvider.LoginFunc(context)
 		},
 	},
@@ -43,7 +43,7 @@ var UsersControllerItem = []ControllerItem{
 		Url:"auth/instagram",
 		Method:"Get",
 		HandlerFunc: func(context echo.Context) error {
-			githubProvider := OAuthService.GetService("instagram")
+			githubProvider := oauthService.GetService("instagram")
 			return githubProvider.OAuthFunc(context)
 		},
 	},
@@ -51,7 +51,7 @@ var UsersControllerItem = []ControllerItem{
 		Url:"login/instagram",
 		Method:"Get",
 		HandlerFunc: func(context echo.Context) error {
-			githubProvider := OAuthService.GetService("instagram")
+			githubProvider := oauthService.GetService("instagram")
 			return githubProvider.LoginFunc(context)
 		},
 	},
@@ -59,9 +59,9 @@ var UsersControllerItem = []ControllerItem{
 func NewOAuthController(e *echo.Echo) *EntityController {
 	entityCtrl := new(EntityController)
 	entityCtrl.intialEntityController(e,"user")
-	OAuthService = Service.NewOAuthService()
+	oauthService = Service.NewOAuthService()
 
-	for _, ctrlItem := range UsersControllerItem {
+	for _, ctrlItem := range usersControllerItem {
 		entityCtrl.AddCtrlItem(ctrlItem)
 	}
 	return entityCtrl

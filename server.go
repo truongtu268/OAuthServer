@@ -16,6 +16,7 @@ func main() {
 	unit.Config = <- Domain.GetConfigFile()
 	unit.Run()
 	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 	mediator := new(Controller.ControllerMediator)
 	mediator.InitialMediator(e)
 	mediator.Execute()

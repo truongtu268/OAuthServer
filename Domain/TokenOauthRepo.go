@@ -2,6 +2,7 @@ package Domain
 
 import (
 	"github.com/truongtu268/OAuthServer/Model"
+	"errors"
 )
 
 type TokenOauthRepo struct {
@@ -25,4 +26,18 @@ func (userRepo *TokenOauthRepo) FindOrCreateTokenByProviderLogin(token *Model.To
 		return dbResultUpdateAccsessToken.Error
 	}
 	return nil
+}
+
+func (tokenRepo *TokenOauthRepo) FindAccessTokenToValidateUser(token string, user *Model.User) error {
+	tokenResult := new(Model.TokenOauth)
+	dbFindAccessToken := tokenRepo.db.Where(Model.TokenOauth{
+		AccessToken:token,
+	}).First(&tokenResult)
+	if dbFindAccessToken.Error != nil {
+		return errors.New("Token doesn't validate")
+	}
+	dbFindUserFromToken := tokenRepo.db.Where(Model.User{
+		ID:tokenResult.UserRefer,
+	}).First(&user)
+	return dbFindUserFromToken.Error
 }

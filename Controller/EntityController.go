@@ -3,6 +3,7 @@ package Controller
 import (
 	"github.com/labstack/echo"
 	"fmt"
+	"github.com/truongtu268/OAuthServer/Middleware"
 )
 
 type EntityController struct {
@@ -24,7 +25,7 @@ func (entityCtr *EntityController)Execute() error {
 	for _, ctrItem := range entityCtr.listEntityCtrItem {
 		switch ctrItem.Method {
 		case "Post": entityCtr.echo.POST(fmt.Sprintf("%s/%s",entityCtr.subUrl,ctrItem.Url),ctrItem.HandlerFunc)
-		case "Get": entityCtr.echo.GET(fmt.Sprintf("%s/%s",entityCtr.subUrl,ctrItem.Url),ctrItem.HandlerFunc)
+		case "Get": entityCtr.echo.GET(fmt.Sprintf("%s/%s",entityCtr.subUrl,ctrItem.Url),ctrItem.HandlerFunc,NewMiddleware.ValidateHeaderToken)
 		case "Put": entityCtr.echo.PUT(fmt.Sprintf("%s/%s",entityCtr.subUrl,ctrItem.Url),ctrItem.HandlerFunc)
 		case "Delete": entityCtr.echo.DELETE(fmt.Sprintf("%s/%s",entityCtr.subUrl,ctrItem.Url),ctrItem.HandlerFunc)
 		}

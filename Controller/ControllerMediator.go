@@ -10,7 +10,8 @@ type ControllerMediator struct {
 
 func (mediator *ControllerMediator)InitialMediator(echo *echo.Echo) {
 	mediator.EntityControllers = append(mediator.EntityControllers,
-		NewOAuthController(echo))
+		NewOAuthController(echo),
+		NewPrivateController(echo),)
 }
 
 func (mediator *ControllerMediator)Execute() error {

@@ -10,8 +10,18 @@ import (
 	"github.com/truongtu268/OAuthServer/Domain"
 	"github.com/truongtu268/OAuthServer/Common"
 	"github.com/truongtu268/OAuthServer/Model"
-	"fmt"
 )
+
+func MapTokenDto2Entity(tok *oauth2.Token, providerName string, user *Model.User) *Model.TokenOauth {
+	token := new(Model.TokenOauth)
+	token.AccessToken = tok.AccessToken
+	token.Expiry = tok.Expiry
+	token.Provider = providerName
+	token.RefeshToken = tok.RefreshToken
+	token.TokenType = tok.TokenType
+	token.UserRefer = user.ID
+	return token
+}
 
 type IOAuthStorageData interface {
 	CreateDataUserAndTokenToDataBase(auth *ProviderAuth,
@@ -43,10 +53,12 @@ func (google *GoogleStorageData) CreateDataUserAndTokenToDataBase(
 	var userMapper = userDto.MapperDto2Entity()
 	userEntity := new(Model.User)
 	Common.MapObject(userMapper, userEntity)
-	userRepo.FindOrCreateUserByProviderLogin(userEntity)
-	token := new(Model.TokenOauth)
-	Common.MapObject(tok,token)
-	tokenRepo.FindOrCreateTokenByProviderLogin(token)
+	err =userRepo.FindOrCreateUserByProviderLogin(userEntity)
+	if err != nil {
+		return err, nil
+	}
+	tokenEntity := MapTokenDto2Entity(tok, auth.Provider.Name, userEntity)
+	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
 	return nil, userEntity
 }
 
@@ -75,9 +87,8 @@ func (github *GithubStorageData) CreateDataUserAndTokenToDataBase(
 	userEntity := new(Model.User)
 	Common.MapObject(userMapper, userEntity)
 	userRepo.FindOrCreateUserByProviderLogin(userEntity)
-	token := new(Model.TokenOauth)
-	Common.MapObject(tok,token)
-	tokenRepo.FindOrCreateTokenByProviderLogin(token)
+	tokenEntity := MapTokenDto2Entity(tok, auth.Provider.Name, userEntity)
+	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
 	return nil, userEntity
 }
 
@@ -98,10 +109,8 @@ func (instagram *InstagramStorageData) CreateDataUserAndTokenToDataBase(
 	userEntity := new(Model.User)
 	Common.MapObject(userMapper, userEntity)
 	userRepo.FindOrCreateUserByProviderLogin(userEntity)
-	token := new(Model.TokenOauth)
-	fmt.Println("123",tok.AccessToken)
-	Common.MapObject(tok,token)
-	tokenRepo.FindOrCreateTokenByProviderLogin(token)
+	tokenEntity := MapTokenDto2Entity(tok, auth.Provider.Name, userEntity)
+	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
 	return nil, userEntity
 }
 

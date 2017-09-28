@@ -10,5 +10,7 @@ type TokenOauth struct {
 	TokenType string
 	Scope string
 	Provider string
+	UserTok User `gorm:"ForeignKey:UserRefer"`
+	UserRefer string
 	SecurityLevel string
 }

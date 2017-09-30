@@ -7,7 +7,7 @@ import (
 )
 
 type Entity struct {
-	ID         string `gorm:"primary_key;"`
+	ID        string `gorm:"primary_key;"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time
@@ -24,4 +24,3 @@ func (user *Entity) BeforeUpdate(scope gorm.Scope) error {
 	scope.SetColumn("UpdatedAt", time.Now())
 	return nil
 }
-

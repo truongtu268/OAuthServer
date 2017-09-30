@@ -23,11 +23,28 @@ func MapTokenDto2Entity(tok *oauth2.Token, providerName string, user *Model.User
 	return token
 }
 
+func createUserAndUserSecurityInfo(userDto Dtos.EntityDto,
+	tok *oauth2.Token,
+	auth *ProviderAuth) (error, *Dtos.UserDto) {
+	var userMapper = userDto.MapperDto2Entity()
+	userEntity := new(Model.User)
+	Common.MapObject(userMapper, userEntity)
+	err := userRepo.FindOrCreateUserByProviderLogin(userEntity)
+	if err != nil {
+		return err, nil
+	}
+	tokenEntity := MapTokenDto2Entity(tok, auth.Provider.Name, userEntity)
+	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
+	var dto = new(Dtos.UserDto)
+	Common.MapObject(userEntity, dto)
+	return nil, dto
+}
+
 type IOAuthStorageData interface {
 	CreateDataUserAndTokenToDataBase(auth *ProviderAuth,
 		code string,
 		userRepo *Domain.UserRepo,
-		tokenRepo *Domain.TokenOauthRepo) (error, *Model.User)
+		tokenRepo *Domain.TokenOauthRepo) (error, *Dtos.UserDto)
 }
 
 type GoogleStorageData struct{}
@@ -36,7 +53,7 @@ func (google *GoogleStorageData) CreateDataUserAndTokenToDataBase(
 	auth *ProviderAuth,
 	code string,
 	userRepo *Domain.UserRepo,
-	tokenRepo *Domain.TokenOauthRepo) (error, *Model.User) {
+	tokenRepo *Domain.TokenOauthRepo) (error, *Dtos.UserDto) {
 	var userDto = &Dtos.UserGoogleDto{}
 	tok, err := auth.Conf.Exchange(oauth2.NoContext, code)
 	client := auth.Conf.Client(oauth2.NoContext, tok)
@@ -50,16 +67,7 @@ func (google *GoogleStorageData) CreateDataUserAndTokenToDataBase(
 	if err != nil {
 		return err, nil
 	}
-	var userMapper = userDto.MapperDto2Entity()
-	userEntity := new(Model.User)
-	Common.MapObject(userMapper, userEntity)
-	err =userRepo.FindOrCreateUserByProviderLogin(userEntity)
-	if err != nil {
-		return err, nil
-	}
-	tokenEntity := MapTokenDto2Entity(tok, auth.Provider.Name, userEntity)
-	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
-	return nil, userEntity
+	return createUserAndUserSecurityInfo(userDto, tok, auth)
 }
 
 type GithubStorageData struct{}
@@ -68,7 +76,7 @@ func (github *GithubStorageData) CreateDataUserAndTokenToDataBase(
 	auth *ProviderAuth,
 	code string,
 	userRepo *Domain.UserRepo,
-	tokenRepo *Domain.TokenOauthRepo) (error, *Model.User) {
+	tokenRepo *Domain.TokenOauthRepo) (error, *Dtos.UserDto) {
 	var userDto = &Dtos.UserGithubDto{}
 	tok, err := auth.Conf.Exchange(oauth2.NoContext, code)
 	client := auth.Conf.Client(oauth2.NoContext, tok)
@@ -82,14 +90,7 @@ func (github *GithubStorageData) CreateDataUserAndTokenToDataBase(
 	if err != nil {
 		return err, nil
 	}
-
-	var userMapper = userDto.MapperDto2Entity()
-	userEntity := new(Model.User)
-	Common.MapObject(userMapper, userEntity)
-	userRepo.FindOrCreateUserByProviderLogin(userEntity)
-	tokenEntity := MapTokenDto2Entity(tok, auth.Provider.Name, userEntity)
-	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
-	return nil, userEntity
+	return createUserAndUserSecurityInfo(userDto, tok, auth)
 }
 
 type InstagramStorageData struct{}
@@ -98,20 +99,14 @@ func (instagram *InstagramStorageData) CreateDataUserAndTokenToDataBase(
 	auth *ProviderAuth,
 	code string,
 	userRepo *Domain.UserRepo,
-	tokenRepo *Domain.TokenOauthRepo) (error, *Model.User) {
+	tokenRepo *Domain.TokenOauthRepo) (error, *Dtos.UserDto) {
 	var userDto = &Dtos.UserInstagramDto{}
 	tok, err := auth.Conf.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		return err, nil
 	}
 	mapstructure.Decode(tok.Extra("user"), &userDto)
-	var userMapper = userDto.MapperDto2Entity()
-	userEntity := new(Model.User)
-	Common.MapObject(userMapper, userEntity)
-	userRepo.FindOrCreateUserByProviderLogin(userEntity)
-	tokenEntity := MapTokenDto2Entity(tok, auth.Provider.Name, userEntity)
-	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
-	return nil, userEntity
+	return createUserAndUserSecurityInfo(userDto, tok, auth)
 }
 
 type ServiceLocateForStorageUserAndToken struct {
@@ -119,7 +114,7 @@ type ServiceLocateForStorageUserAndToken struct {
 }
 
 func (services *ServiceLocateForStorageUserAndToken) AddOAuthStorageData(service IOAuthStorageData, name string) error {
-	_, ok:=services.listIOAuthStorageData[name]
+	_, ok := services.listIOAuthStorageData[name]
 	if ok {
 		return errors.New("This key exist in Service Locate")
 	}
@@ -128,7 +123,7 @@ func (services *ServiceLocateForStorageUserAndToken) AddOAuthStorageData(service
 }
 
 func (services *ServiceLocateForStorageUserAndToken) GetOAuthStorageData(name string) (error, IOAuthStorageData) {
-	service,ok := services.listIOAuthStorageData[name]
+	service, ok := services.listIOAuthStorageData[name]
 	if ok {
 		return nil, service
 	}
@@ -138,8 +133,8 @@ func (services *ServiceLocateForStorageUserAndToken) GetOAuthStorageData(name st
 func NewServiceLocateForStorageData() *ServiceLocateForStorageUserAndToken {
 	services := new(ServiceLocateForStorageUserAndToken)
 	services.listIOAuthStorageData = make(map[string]IOAuthStorageData)
-	services.AddOAuthStorageData(new(GoogleStorageData),"google")
-	services.AddOAuthStorageData(new(GithubStorageData),"github")
-	services.AddOAuthStorageData(new(InstagramStorageData),"instagram")
+	services.AddOAuthStorageData(new(GoogleStorageData), "google")
+	services.AddOAuthStorageData(new(GithubStorageData), "github")
+	services.AddOAuthStorageData(new(InstagramStorageData), "instagram")
 	return services
 }

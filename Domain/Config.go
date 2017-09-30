@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"log"
 )
+
 type DataConfig struct {
-	Host string `json:"host" validate:"required"`
-	User string `json:"user" validate:"required"`
-	DbName string `json:"dbname" validate:"required"`
+	Host     string `json:"host" validate:"required"`
+	User     string `json:"user" validate:"required"`
+	DbName   string `json:"dbname" validate:"required"`
 	Password string `json:"password" validate:"required"`
-	Migrate string `json:"migrate" validate:"required"`
+	Migrate  string `json:"migrate" validate:"required"`
 }
 
 func LoadConfig(path string) DataConfig {
@@ -29,9 +30,9 @@ func LoadConfig(path string) DataConfig {
 }
 
 func GetConfigFile() chan DataConfig {
-	channel:= make(chan DataConfig)
+	channel := make(chan DataConfig)
 	go func() {
-		channel<- LoadConfig("config.json")
+		channel <- LoadConfig("config.json")
 	}()
 	return channel
 }

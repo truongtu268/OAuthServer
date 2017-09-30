@@ -33,11 +33,11 @@ type ProviderAuth struct {
 
 func (googleOAuth *ProviderAuth) OAuthFunc(context echo.Context) error {
 	code := context.QueryParam("code")
-	err,serviceStorage := serviceLocator.GetOAuthStorageData(googleOAuth.Provider.Name)
+	err, serviceStorage := serviceLocator.GetOAuthStorageData(googleOAuth.Provider.Name)
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
-	err,user :=serviceStorage.CreateDataUserAndTokenToDataBase(googleOAuth,code,userRepo, tokenRepo)
+	err, user := serviceStorage.CreateDataUserAndTokenToDataBase(googleOAuth, code, userRepo, tokenRepo)
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -81,8 +81,8 @@ func NewOAuthService() *OAuthService {
 	userRepo = new(Domain.UserRepo)
 	tokenRepo = new(Domain.TokenOauthRepo)
 	providerRepo.InitialRepo(new(Model.Provider), "")
-	userRepo.InitialRepo(new(Model.User),"")
-	tokenRepo.InitialRepo(new(Model.TokenOauth),"")
+	userRepo.InitialRepo(new(Model.User), "")
+	tokenRepo.InitialRepo(new(Model.TokenOauth), "")
 	serviceLocator = NewServiceLocateForStorageData()
 	service := new(OAuthService)
 	service.oauthService = make(map[string]IOAuthService)

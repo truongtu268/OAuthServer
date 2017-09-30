@@ -6,8 +6,8 @@ import (
 )
 
 type EntityRepository struct {
-	db *gorm.DB
-	entity Model.IEntity
+	db          *gorm.DB
+	entity      Model.IEntity
 	migrateMode string
 }
 
@@ -28,7 +28,7 @@ func (useRepo *EntityRepository) Delete(id string, user Model.IEntity) error {
 }
 
 func (userRepo *EntityRepository) FindOne(id string, user Model.IEntity) error {
-	dbResult := userRepo.db.Where("id=?",id).First(user)
+	dbResult := userRepo.db.Where("id=?", id).First(user)
 	if dbResult.Error != nil {
 		return dbResult.Error
 	}
@@ -41,7 +41,7 @@ func (userRepo *EntityRepository) InitialRepo(entity Model.IEntity, migrate stri
 	userRepo.migrateMode = migrate
 }
 
-func (userRepo *EntityRepository)InitialTable() error {
+func (userRepo *EntityRepository) InitialTable() error {
 	if userRepo.migrateMode != "drop" {
 		return nil
 	}

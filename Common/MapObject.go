@@ -6,12 +6,12 @@ import (
 	"strings"
 )
 
-func MapObject(dto interface{},entity interface{}) {
-	b,err := json.Marshal(dto)
+func MapObject(input interface{}, output interface{}) {
+	b, err := json.Marshal(input)
 	if err != nil {
-		fmt.Println("Error:%s ",err)
+		fmt.Println("Error:%s ", err)
 	}
-	if err = json.NewDecoder(strings.NewReader(string(b))).Decode(entity);err != nil {
+	if err = json.NewDecoder(strings.NewReader(string(b))).Decode(output); err != nil {
 		fmt.Println(err)
 	}
 }

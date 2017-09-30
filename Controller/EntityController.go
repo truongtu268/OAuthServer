@@ -11,7 +11,7 @@ type EntityController struct {
 	echo              *echo.Echo
 	subUrl            string
 	listEntityCtrItem []ControllerItem
-	validateLocation *NewMiddleware.ValidatorLocate
+	validateLocation  *NewMiddleware.ValidatorLocate
 }
 
 func (entityCtr *EntityController) intialEntityController(e *echo.Echo, subUrl string, validateLocation *NewMiddleware.ValidatorLocate) {
@@ -29,13 +29,13 @@ func (entityCtr *EntityController) Execute() error {
 		fullUrl := fmt.Sprintf("%s/%s", entityCtr.subUrl, ctrItem.Url)
 		switch ctrItem.Method {
 		case "Post":
-			entityCtr.echo.POST(fullUrl, ctrItem.HandlerFunc, mapMiddlewareFromPolicies2CtrlItem(fullUrl,entityCtr.validateLocation)...)
+			entityCtr.echo.POST(fullUrl, ctrItem.HandlerFunc, mapMiddlewareFromPolicies2CtrlItem(fullUrl, entityCtr.validateLocation)...)
 		case "Get":
-			entityCtr.echo.GET(fullUrl, ctrItem.HandlerFunc,  mapMiddlewareFromPolicies2CtrlItem(fullUrl,entityCtr.validateLocation)...)
+			entityCtr.echo.GET(fullUrl, ctrItem.HandlerFunc, mapMiddlewareFromPolicies2CtrlItem(fullUrl, entityCtr.validateLocation)...)
 		case "Put":
-			entityCtr.echo.PUT(fullUrl, ctrItem.HandlerFunc,  mapMiddlewareFromPolicies2CtrlItem(fullUrl,entityCtr.validateLocation)...)
+			entityCtr.echo.PUT(fullUrl, ctrItem.HandlerFunc, mapMiddlewareFromPolicies2CtrlItem(fullUrl, entityCtr.validateLocation)...)
 		case "Delete":
-			entityCtr.echo.DELETE(fullUrl, ctrItem.HandlerFunc,  mapMiddlewareFromPolicies2CtrlItem(fullUrl,entityCtr.validateLocation)...)
+			entityCtr.echo.DELETE(fullUrl, ctrItem.HandlerFunc, mapMiddlewareFromPolicies2CtrlItem(fullUrl, entityCtr.validateLocation)...)
 		}
 	}
 	return nil
@@ -52,7 +52,7 @@ func TranferListStringToListValidator(listString []string, locate *NewMiddleware
 	return listValidator
 }
 
-func mapMiddlewareFromPolicies2CtrlItem(fullUrl string,validateLocation *NewMiddleware.ValidatorLocate) []echo.MiddlewareFunc {
+func mapMiddlewareFromPolicies2CtrlItem(fullUrl string, validateLocation *NewMiddleware.ValidatorLocate) []echo.MiddlewareFunc {
 	listUrl := strings.Split(fullUrl, "/")
 	_, ok := Policies[listUrl[0]]
 	if ok {
@@ -62,11 +62,11 @@ func mapMiddlewareFromPolicies2CtrlItem(fullUrl string,validateLocation *NewMidd
 		}
 		listValidatorNameDefaultCtroller, ok2 := Policies[listUrl[0]]["*"]
 		if ok2 {
-			return TranferListStringToListValidator(listValidatorNameDefaultCtroller,validateLocation)
+			return TranferListStringToListValidator(listValidatorNameDefaultCtroller, validateLocation)
 		}
 		listValidatorNameDefaultSystem := Policies["*"]["*"]
-		return TranferListStringToListValidator(listValidatorNameDefaultSystem,validateLocation)
+		return TranferListStringToListValidator(listValidatorNameDefaultSystem, validateLocation)
 	}
 	listValidatorNameDefaultSystem := Policies["*"]["*"]
-	return TranferListStringToListValidator(listValidatorNameDefaultSystem,validateLocation)
+	return TranferListStringToListValidator(listValidatorNameDefaultSystem, validateLocation)
 }

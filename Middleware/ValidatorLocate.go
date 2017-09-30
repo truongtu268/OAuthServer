@@ -11,8 +11,8 @@ type ValidatorLocate struct {
 }
 
 func (validators *ValidatorLocate) AddValidator(validator IValidator) error {
-	var NameValidator = strings.Replace(reflect.TypeOf(validator).String(),"*NewMiddleware.","",-1)
-	_, ok:=validators.listValidator[NameValidator]
+	var NameValidator = strings.Replace(reflect.TypeOf(validator).String(), "*NewMiddleware.", "", -1)
+	_, ok := validators.listValidator[NameValidator]
 	if ok {
 		return errors.New("This key exist in Validator Locate")
 	}
@@ -21,7 +21,7 @@ func (validators *ValidatorLocate) AddValidator(validator IValidator) error {
 }
 
 func (validators *ValidatorLocate) GetValidator(name string) (error, IValidator) {
-	validator,ok := validators.listValidator[name]
+	validator, ok := validators.listValidator[name]
 	if ok {
 		return nil, validator
 	}

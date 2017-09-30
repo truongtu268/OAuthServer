@@ -9,14 +9,14 @@ type ControllerMediator struct {
 	EntityControllers []*EntityController
 }
 
-func (mediator *ControllerMediator)InitialMediator(echo *echo.Echo) {
-	validatorLocate:= NewMiddleware.NewValidatorLocation()
+func (mediator *ControllerMediator) InitialMediator(echo *echo.Echo) {
+	validatorLocate := NewMiddleware.NewValidatorLocation()
 	mediator.EntityControllers = append(mediator.EntityControllers,
 		NewOAuthController(echo, validatorLocate),
-		NewPrivateController(echo, validatorLocate),)
+		NewPrivateController(echo, validatorLocate), )
 }
 
-func (mediator *ControllerMediator)Execute() error {
+func (mediator *ControllerMediator) Execute() error {
 	for _, ctrl := range mediator.EntityControllers {
 		ctrl.Execute()
 	}

@@ -9,9 +9,17 @@ type UserRepo struct {
 }
 
 func (userRepo *UserRepo) FindOrCreateUserByProviderLogin(user *Model.User) error {
-	dbResult := userRepo.db.Where(Model.User{
-		ProviderLogin:  user.ProviderLogin,
-		IdFromProvider: user.IdFromProvider,
-	}).FirstOrCreate(&user)
-	return dbResult.Error
+	securityInfo := new(Model.UserSecurityInfo)
+	dbResult := userRepo.db.Where(Model.UserSecurityInfo{
+		ProviderLogin:  user.SecurityInfos[0].ProviderLogin,
+		IdFromProvider: user.SecurityInfos[0].IdFromProvider,
+	}).First(&securityInfo)
+	if dbResult.Error != nil {
+		dbCreateUser := userRepo.db.Create(&user)
+		return dbCreateUser.Error
+	}
+	dbResultToPopulateUser := userRepo.db.Model(user).Where(Model.User{
+		ID: securityInfo.UserRefer,
+	}).First(&user)
+	return dbResultToPopulateUser.Error
 }

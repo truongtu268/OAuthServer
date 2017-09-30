@@ -13,3 +13,9 @@ func (userRepo *ProviderRepo) Find(users *[]Model.Provider) error {
 	}
 	return nil
 }
+
+func NewProviderRepo() *ProviderRepo {
+	var repo = new(ProviderRepo)
+	repo.InitialRepo(new(Model.Provider),"")
+	return repo
+}

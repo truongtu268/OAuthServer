@@ -23,12 +23,14 @@ func MapTokenDto2Entity(tok *oauth2.Token, providerName string, user *Model.User
 	return token
 }
 
-func createUserAndUserSecurityInfo(userDto Dtos.EntityDto,
+func createUserAndUserSecurityInfo(
+	userDto Dtos.EntityDto,
 	tok *oauth2.Token,
 	auth *ProviderAuth) (error, *Dtos.UserDto) {
 	var userMapper = userDto.MapperDto2Entity()
 	userEntity := new(Model.User)
 	Common.MapObject(userMapper, userEntity)
+	userEntity.SecurityInfos[0].ClientId = auth.Provider.ID
 	err := userRepo.FindOrCreateUserByProviderLogin(userEntity)
 	if err != nil {
 		return err, nil

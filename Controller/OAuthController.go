@@ -1,70 +1,32 @@
 package Controller
 
 import (
-	"github.com/labstack/echo"
-	"github.com/truongtu268/OAuthServer/Service"
 	"github.com/truongtu268/OAuthServer/Middleware"
+	"github.com/labstack/echo"
+	"net/http"
 )
 
-var oauthService *Service.OAuthService
-var state string
-var usersControllerItem = []ControllerItem{
+var oauthCotrollerItem = []ControllerItem{
 	ControllerItem{
-		Url:    "auth/github",
+		Url:    "authorize",
 		Method: "Get",
 		HandlerFunc: func(context echo.Context) error {
-			githubProvider := oauthService.GetService("github")
-			return githubProvider.OAuthFunc(context)
+			return context.JSON(http.StatusOK, "authorize")
 		},
 	},
 	ControllerItem{
-		Url:    "login/github",
+		Url:    "access_token",
 		Method: "Get",
 		HandlerFunc: func(context echo.Context) error {
-			githubProvider := oauthService.GetService("github")
-			return githubProvider.LoginFunc(context)
-		},
-	},
-	ControllerItem{
-		Url:    "auth/google",
-		Method: "Get",
-		HandlerFunc: func(context echo.Context) error {
-			githubProvider := oauthService.GetService("google")
-			return githubProvider.OAuthFunc(context)
-		},
-	},
-	ControllerItem{
-		Url:    "login/google",
-		Method: "Get",
-		HandlerFunc: func(context echo.Context) error {
-			githubProvider := oauthService.GetService("google")
-			return githubProvider.LoginFunc(context)
-		},
-	},
-	ControllerItem{
-		Url:    "auth/instagram",
-		Method: "Get",
-		HandlerFunc: func(context echo.Context) error {
-			githubProvider := oauthService.GetService("instagram")
-			return githubProvider.OAuthFunc(context)
-		},
-	},
-	ControllerItem{
-		Url:    "login/instagram",
-		Method: "Get",
-		HandlerFunc: func(context echo.Context) error {
-			githubProvider := oauthService.GetService("instagram")
-			return githubProvider.LoginFunc(context)
+			return context.JSON(http.StatusOK, "token access")
 		},
 	},
 }
 
-func NewOAuthController(e *echo.Echo, validatorLocate *NewMiddleware.ValidatorLocate) *EntityController {
+func NewOauthController(e *echo.Echo, validatorLocate *NewMiddleware.ValidatorLocate) *EntityController {
 	entityCtrl := new(EntityController)
-	entityCtrl.intialEntityController(e, "user", validatorLocate)
-	oauthService = Service.NewOAuthService()
-
-	for _, ctrlItem := range usersControllerItem {
+	entityCtrl.intialEntityController(e, "oauth", validatorLocate)
+	for _, ctrlItem := range privateCotrollerItem {
 		entityCtrl.AddCtrlItem(ctrlItem)
 	}
 	return entityCtrl

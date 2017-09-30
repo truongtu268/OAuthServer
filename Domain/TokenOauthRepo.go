@@ -28,13 +28,22 @@ func (userRepo *TokenOauthRepo) FindOrCreateTokenByProviderLogin(token *Model.To
 	return nil
 }
 
-func (tokenRepo *TokenOauthRepo) FindAccessTokenToValidateUser(token string, tokenResult *Model.TokenOauth) error {
+func (tokenRepo *TokenOauthRepo) FindAccessTokenToValidateUser(token string, user *Model.User) error {
+	tokenResult := new(Model.TokenOauth)
 	dbFindAccessToken := tokenRepo.db.Where(Model.TokenOauth{
 		AccessToken: token,
 	}).First(&tokenResult)
 	if dbFindAccessToken.Error != nil {
 		return errors.New("Token doesn't validate")
 	}
-	dbPopulateUse2Token := tokenRepo.db.Model(tokenResult).Related(&tokenResult.UserTok)
-	return dbPopulateUse2Token.Error
+	dbUserFindFromTok := tokenRepo.db.Where(Model.User{
+		ID: tokenResult.UserRefer,
+	}).First(&user)
+	return dbUserFindFromTok.Error
+}
+
+func NewTokenOauthRepo() *TokenOauthRepo {
+	var repo = new(TokenOauthRepo)
+	repo.InitialRepo(new(Model.TokenOauth),"")
+	return repo
 }

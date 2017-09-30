@@ -40,4 +40,27 @@ var Providers = []Model.Provider{
 		AuthURL:  "https://api.instagram.com/oauth/authorize",
 		TokenURL: "https://api.instagram.com/oauth/access_token",
 	},
+	Model.Provider{
+		Name:     "internal server",
+		Cid:      "cb1d9f05d80e4a2c821c2916499c4b8q",
+		Csecret:  "907debf7db834c2594b595de45ae533q",
+		Callback: "http://127.0.0.1:9090/user/auth/local_authorize",
+		Scope: []string{
+			"basic",
+			"read profile",
+		},
+		Client:   "http://127.0.0.1:9090/private/info",
+		AuthURL:  "http://127.0.0.1:9090/oauth/authorize",
+		TokenURL: "http://127.0.0.1:9090/oauth/access_token",
+	},
+}
+
+var Clients = []Model.Client{
+	Model.Client{
+		ID:"cb1d9f05d80e4a2c821c2916499c4b8q",
+		Secret:"907debf7db834c2594b595de45ae533q",
+		Scope:      []string{"basic", "read profile"},
+		CallBack:   []string{"http://127.0.0.1:9090/user/auth/local_authorize"},
+		TrustLevel: "5",
+	},
 }

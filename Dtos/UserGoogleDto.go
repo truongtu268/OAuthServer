@@ -20,7 +20,6 @@ func (github *UserGoogleDto) MapperDto2Entity() Model.IEntity {
 		Model.UserSecurityInfo{
 			Username:       github.Email,
 			IdFromProvider: github.Sub,
-			ProviderLogin:  "google",
 		},
 	}
 	return user

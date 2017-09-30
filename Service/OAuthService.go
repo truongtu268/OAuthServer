@@ -77,12 +77,9 @@ func (service *OAuthService) GetService(providerName string) IOAuthService {
 }
 
 func NewOAuthService() *OAuthService {
-	providerRepo := new(Domain.ProviderRepo)
-	userRepo = new(Domain.UserRepo)
-	tokenRepo = new(Domain.TokenOauthRepo)
-	providerRepo.InitialRepo(new(Model.Provider), "")
-	userRepo.InitialRepo(new(Model.User), "")
-	tokenRepo.InitialRepo(new(Model.TokenOauth), "")
+	providerRepo := Domain.NewProviderRepo()
+	userRepo = Domain.NewUserRepo()
+	tokenRepo = Domain.NewTokenOauthRepo()
 	serviceLocator = NewServiceLocateForStorageData()
 	service := new(OAuthService)
 	service.oauthService = make(map[string]IOAuthService)

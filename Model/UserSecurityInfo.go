@@ -12,7 +12,7 @@ type UserSecurityInfo struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	DeletedAt      *time.Time
-	ProviderLogin  string
+	ClientId       string
 	IdFromProvider string
 	Username       string
 	Password       string

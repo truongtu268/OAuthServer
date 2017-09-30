@@ -15,6 +15,7 @@ type User struct {
 	Email         string
 	Name          string
 	SecurityInfos []UserSecurityInfo `gorm:"ForeignKey:UserRefer"`
+	ClientRefer   string
 }
 
 func (entity *User) BeforeCreate(scope *gorm.Scope) error {

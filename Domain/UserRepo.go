@@ -11,7 +11,7 @@ type UserRepo struct {
 func (userRepo *UserRepo) FindOrCreateUserByProviderLogin(user *Model.User) error {
 	securityInfo := new(Model.UserSecurityInfo)
 	dbResult := userRepo.db.Where(Model.UserSecurityInfo{
-		ProviderLogin:  user.SecurityInfos[0].ProviderLogin,
+		ClientId:  user.SecurityInfos[0].ClientId,
 		IdFromProvider: user.SecurityInfos[0].IdFromProvider,
 	}).First(&securityInfo)
 	if dbResult.Error != nil {
@@ -22,4 +22,10 @@ func (userRepo *UserRepo) FindOrCreateUserByProviderLogin(user *Model.User) erro
 		ID: securityInfo.UserRefer,
 	}).First(&user)
 	return dbResultToPopulateUser.Error
+}
+
+func NewUserRepo() *UserRepo {
+	var repo = new(UserRepo)
+	repo.InitialRepo(new(Model.User),"")
+	return repo
 }

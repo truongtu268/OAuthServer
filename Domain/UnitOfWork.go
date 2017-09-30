@@ -29,7 +29,8 @@ func (unit *UnitOfWork) Run() {
 			new(Model.Provider),
 			new(Model.User),
 			new(Model.TokenOauth),
-			new(Model.UserSecurityInfo), )
+			new(Model.UserSecurityInfo),
+			new(Model.Client), )
 		for _, entity := range entitylist {
 			entityRepo := new(EntityRepository)
 			entityRepo.InitialRepo(entity, unit.Config.Migrate)
@@ -41,10 +42,16 @@ func (unit *UnitOfWork) Run() {
 }
 
 func (unit *UnitOfWork) boostrapData() {
-	providerRepo := unit.Repositories["RepoProvider"]
+	clientRepo := NewClientRepo()
+	providerRepo := NewProviderRepo()
 	for _, value := range FakeData.Providers {
 		var user = new(Model.Provider)
 		Common.MapObject(value, user)
 		providerRepo.Create(user)
+	}
+	for _, value := range FakeData.Clients {
+		var client = new(Model.Client)
+		Common.MapObject(value, client)
+		clientRepo.Create(client)
 	}
 }

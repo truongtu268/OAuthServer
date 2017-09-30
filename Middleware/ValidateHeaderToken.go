@@ -2,12 +2,13 @@ package NewMiddleware
 
 import (
 	"github.com/labstack/echo"
-	"errors"
 	"strings"
 	"net/http"
 
 	"github.com/truongtu268/OAuthServer/Domain"
 	"github.com/truongtu268/OAuthServer/Model"
+	"github.com/truongtu268/OAuthServer/Common"
+	"github.com/truongtu268/OAuthServer/Dtos"
 )
 
 type ValidateHeaderToken struct{}
@@ -22,14 +23,16 @@ func (validator *ValidateHeaderToken) Execute(next echo.HandlerFunc) echo.Handle
 		}
 		tokenString := strings.TrimPrefix(tokens, "Bearer ")
 		if tokenString == "" {
-			return context.JSON(http.StatusUnauthorized, errors.New("Token string is empty"))
+			return context.JSON(http.StatusUnauthorized, "Token string is empty")
 		}
-		userFromToken := new(Model.TokenOauth)
+		userFromToken := new(Model.User)
 		err := tokenRepo.FindAccessTokenToValidateUser(tokenString, userFromToken)
 		if err != nil {
 			return context.JSON(http.StatusUnauthorized, err)
 		}
-		context.Set("user_info", userFromToken.UserTok)
+		dto:= new(Dtos.UserDto)
+		Common.MapObject(userFromToken,dto)
+		context.Set("user_info", dto)
 		return next(context)
 	}
 }

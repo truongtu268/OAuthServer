@@ -41,7 +41,7 @@ var Providers = []Model.Provider{
 		TokenURL: "https://api.instagram.com/oauth/access_token",
 	},
 	Model.Provider{
-		Name:     "internal server",
+		Name:     "internal",
 		Cid:      "cb1d9f05d80e4a2c821c2916499c4b8q",
 		Csecret:  "907debf7db834c2594b595de45ae533q",
 		Callback: "http://127.0.0.1:9090/user/auth/local_authorize",
@@ -57,10 +57,25 @@ var Providers = []Model.Provider{
 
 var Clients = []Model.Client{
 	Model.Client{
-		ID:"cb1d9f05d80e4a2c821c2916499c4b8q",
-		Secret:"907debf7db834c2594b595de45ae533q",
+		ID:         "cb1d9f05d80e4a2c821c2916499c4b8q",
+		Secret:     "907debf7db834c2594b595de45ae533q",
 		Scope:      []string{"basic", "read profile"},
 		CallBack:   []string{"http://127.0.0.1:9090/user/auth/local_authorize"},
 		TrustLevel: "5",
+	},
+}
+
+var Users = []Model.User{
+	Model.User{
+		Name:   "Truongtu",
+		Email:  "truogntu268@gmail.com",
+		Avatar: "tu dep trai",
+		SecurityInfos: []Model.UserSecurityInfo{
+			Model.UserSecurityInfo{
+				ProviderLogin: "internal",
+				Username:      "truongtu",
+				Password:      "123456789",
+			},
+		},
 	},
 }

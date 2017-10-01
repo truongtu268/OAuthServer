@@ -8,12 +8,13 @@ import (
 	"github.com/truongtu268/OAuthServer/Common"
 	"github.com/truongtu268/OAuthServer/Controller"
 )
+
 func main() {
 	e := echo.New()
 	customValidator := Common.NewCustomValidator()
 	e.Validator = customValidator
 	unit := new(Domain.UnitOfWork)
-	unit.Config = <- Domain.GetConfigFile()
+	unit.Config = <-Domain.GetConfigFile()
 	unit.Run()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())

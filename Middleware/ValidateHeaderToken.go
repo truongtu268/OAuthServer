@@ -30,8 +30,8 @@ func (validator *ValidateHeaderToken) Execute(next echo.HandlerFunc) echo.Handle
 		if err != nil {
 			return context.JSON(http.StatusUnauthorized, err)
 		}
-		dto:= new(Dtos.UserDto)
-		Common.MapObject(userFromToken,dto)
+		dto := new(Dtos.UserDto)
+		Common.MapObject(userFromToken, dto)
 		context.Set("user_info", dto)
 		return next(context)
 	}

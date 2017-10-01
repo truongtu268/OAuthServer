@@ -11,21 +11,13 @@ type TokenOauthRepo struct {
 
 func (userRepo *TokenOauthRepo) FindOrCreateTokenByProviderLogin(token *Model.TokenOauth) error {
 	dbFindUserExist := userRepo.db.Where(Model.TokenOauth{
-		UserRefer: token.UserRefer,
+		UserTokRefer: token.UserTokRefer,
 	}).Find(&token)
 	if dbFindUserExist.Error != nil {
 		dbCreateNewUserToken := userRepo.db.Create(&token)
 		return dbCreateNewUserToken.Error
 	}
-	dbResultFindAccessTokenExist := userRepo.db.Where(Model.TokenOauth{
-		AccessToken: token.AccessToken,
-		Provider:    token.Provider,
-	}).Find(&token)
-	if dbResultFindAccessTokenExist.Error != nil {
-		dbResultUpdateAccsessToken := userRepo.db.Model(&token).Where("user_refer = ?", token.UserRefer).Update("access_token", "expiry")
-		return dbResultUpdateAccsessToken.Error
-	}
-	return nil
+	return dbFindUserExist.Error
 }
 
 func (tokenRepo *TokenOauthRepo) FindAccessTokenToValidateUser(token string, user *Model.User) error {
@@ -36,14 +28,32 @@ func (tokenRepo *TokenOauthRepo) FindAccessTokenToValidateUser(token string, use
 	if dbFindAccessToken.Error != nil {
 		return errors.New("Token doesn't validate")
 	}
+	if tokenResult.IsExpired() {
+		return errors.New("Token is expired")
+	}
 	dbUserFindFromTok := tokenRepo.db.Where(Model.User{
-		ID: tokenResult.UserRefer,
+		ID: tokenResult.UserTokRefer,
 	}).First(&user)
 	return dbUserFindFromTok.Error
 }
 
+func (tokenRepo *TokenOauthRepo) RefreshAccessToken(refreshToken string, token *Model.TokenOauth) error {
+	dbFindRefreshToken := tokenRepo.db.Where(Model.TokenOauth{
+		RefreshToken: refreshToken,
+	}).First(&token)
+	if dbFindRefreshToken.Error != nil {
+		return errors.New("Refresh Token doesn't validate")
+	}
+	newAccessToken, _, err := token.GenerateAccessToken(false)
+	if err != nil {
+		return errors.New("Something happend with server")
+	}
+	dbUpdateTokenResult := tokenRepo.db.Model(&token).Update("access_token", newAccessToken)
+	return dbUpdateTokenResult.Error
+}
+
 func NewTokenOauthRepo() *TokenOauthRepo {
 	var repo = new(TokenOauthRepo)
-	repo.InitialRepo(new(Model.TokenOauth),"")
+	repo.InitialRepo(new(Model.TokenOauth), "")
 	return repo
 }

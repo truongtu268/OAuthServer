@@ -13,6 +13,7 @@ func (mediator *ControllerMediator) InitialMediator(echo *echo.Echo) {
 	validatorLocate := NewMiddleware.NewValidatorLocation()
 	mediator.EntityControllers = append(mediator.EntityControllers,
 		NewOAuthController(echo, validatorLocate),
+		NewUserController(echo, validatorLocate),
 		NewPrivateController(echo, validatorLocate), )
 }
 

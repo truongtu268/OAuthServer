@@ -22,6 +22,7 @@ func (github *UserGithubDto) MapperDto2Entity() Model.IEntity {
 		Model.UserSecurityInfo{
 			Username:       github.Login,
 			IdFromProvider: strconv.Itoa(github.Id),
+			ProviderLogin:  "github",
 		},
 	}
 	return user

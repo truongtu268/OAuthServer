@@ -12,30 +12,17 @@ import (
 	"github.com/truongtu268/OAuthServer/Model"
 )
 
-func MapTokenDto2Entity(tok *oauth2.Token, providerName string, user *Model.User) *Model.TokenOauth {
-	token := new(Model.TokenOauth)
-	token.AccessToken = tok.AccessToken
-	token.Expiry = tok.Expiry
-	token.Provider = providerName
-	token.RefeshToken = tok.RefreshToken
-	token.TokenType = tok.TokenType
-	token.UserRefer = user.ID
-	return token
-}
-
-func createUserAndUserSecurityInfo(
-	userDto Dtos.EntityDto,
-	tok *oauth2.Token,
-	auth *ProviderAuth) (error, *Dtos.UserDto) {
+func createUserAndUserSecurityInfo(userDto Dtos.EntityDto) (error, *Dtos.UserDto) {
 	var userMapper = userDto.MapperDto2Entity()
 	userEntity := new(Model.User)
 	Common.MapObject(userMapper, userEntity)
-	userEntity.SecurityInfos[0].ClientId = auth.Provider.ID
 	err := userRepo.FindOrCreateUserByProviderLogin(userEntity)
 	if err != nil {
 		return err, nil
 	}
-	tokenEntity := MapTokenDto2Entity(tok, auth.Provider.Name, userEntity)
+	tokenEntity := new(Model.TokenOauth)
+	tokenEntity.UserTokRefer = userEntity.ID
+	tokenEntity.TokenType = "code"
 	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
 	var dto = new(Dtos.UserDto)
 	Common.MapObject(userEntity, dto)
@@ -69,7 +56,7 @@ func (google *GoogleStorageData) CreateDataUserAndTokenToDataBase(
 	if err != nil {
 		return err, nil
 	}
-	return createUserAndUserSecurityInfo(userDto, tok, auth)
+	return createUserAndUserSecurityInfo(userDto)
 }
 
 type GithubStorageData struct{}
@@ -92,7 +79,7 @@ func (github *GithubStorageData) CreateDataUserAndTokenToDataBase(
 	if err != nil {
 		return err, nil
 	}
-	return createUserAndUserSecurityInfo(userDto, tok, auth)
+	return createUserAndUserSecurityInfo(userDto)
 }
 
 type InstagramStorageData struct{}
@@ -108,14 +95,14 @@ func (instagram *InstagramStorageData) CreateDataUserAndTokenToDataBase(
 		return err, nil
 	}
 	mapstructure.Decode(tok.Extra("user"), &userDto)
-	return createUserAndUserSecurityInfo(userDto, tok, auth)
+	return createUserAndUserSecurityInfo(userDto)
 }
 
-type ServiceLocateForStorageUserAndToken struct {
+type StorageUserAndTokenFromProviderService struct {
 	listIOAuthStorageData map[string]IOAuthStorageData
 }
 
-func (services *ServiceLocateForStorageUserAndToken) AddOAuthStorageData(service IOAuthStorageData, name string) error {
+func (services *StorageUserAndTokenFromProviderService) AddOAuthStorageData(service IOAuthStorageData, name string) error {
 	_, ok := services.listIOAuthStorageData[name]
 	if ok {
 		return errors.New("This key exist in Service Locate")
@@ -124,7 +111,7 @@ func (services *ServiceLocateForStorageUserAndToken) AddOAuthStorageData(service
 	return nil
 }
 
-func (services *ServiceLocateForStorageUserAndToken) GetOAuthStorageData(name string) (error, IOAuthStorageData) {
+func (services *StorageUserAndTokenFromProviderService) GetOAuthStorageData(name string) (error, IOAuthStorageData) {
 	service, ok := services.listIOAuthStorageData[name]
 	if ok {
 		return nil, service
@@ -132,8 +119,8 @@ func (services *ServiceLocateForStorageUserAndToken) GetOAuthStorageData(name st
 	return errors.New("This service doesn't exist in Service locator"), nil
 }
 
-func NewServiceLocateForStorageData() *ServiceLocateForStorageUserAndToken {
-	services := new(ServiceLocateForStorageUserAndToken)
+func NewStorageUserAndTokenFromProviderService() *StorageUserAndTokenFromProviderService {
+	services := new(StorageUserAndTokenFromProviderService)
 	services.listIOAuthStorageData = make(map[string]IOAuthStorageData)
 	services.AddOAuthStorageData(new(GoogleStorageData), "google")
 	services.AddOAuthStorageData(new(GithubStorageData), "github")

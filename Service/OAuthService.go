@@ -2,93 +2,105 @@ package Service
 
 import (
 	"github.com/labstack/echo"
-	"golang.org/x/oauth2"
 	"net/http"
-	"crypto/rand"
 	"encoding/base64"
 	"github.com/truongtu268/OAuthServer/Model"
 	"github.com/truongtu268/OAuthServer/Domain"
+	"github.com/truongtu268/OAuthServer/Dtos"
+	"github.com/truongtu268/OAuthServer/Common"
+	"github.com/pborman/uuid"
+	"fmt"
 )
 
-func randToken() string {
-	b := make([]byte, 32)
-	rand.Read(b)
-	return base64.StdEncoding.EncodeToString(b)
-}
-
-var serviceLocator *ServiceLocateForStorageUserAndToken
-var userRepo *Domain.UserRepo
-var tokenRepo *Domain.TokenOauthRepo
-
-type IOAuthService interface {
-	OAuthFunc(e echo.Context) error
-	LoginFunc(e echo.Context) error
-	InitialFunc(provider Model.Provider)
-}
-
-type ProviderAuth struct {
-	Provider Model.Provider
-	Conf     oauth2.Config
-}
-
-func (googleOAuth *ProviderAuth) OAuthFunc(context echo.Context) error {
-	code := context.QueryParam("code")
-	err, serviceStorage := serviceLocator.GetOAuthStorageData(googleOAuth.Provider.Name)
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	err, user := serviceStorage.CreateDataUserAndTokenToDataBase(googleOAuth, code, userRepo, tokenRepo)
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	return context.JSON(http.StatusOK, user)
-}
-
-func (googleOAuth *ProviderAuth) LoginFunc(context echo.Context) error {
-	state := randToken()
-	link := googleOAuth.Conf.AuthCodeURL(state)
-	return context.JSON(http.StatusOK, link)
-}
-
-func (googleOAuth *ProviderAuth) InitialFunc(provider Model.Provider) {
-	googleOAuth.Provider = provider
-	googleOAuth.Conf = oauth2.Config{
-		ClientID:     googleOAuth.Provider.Cid,
-		ClientSecret: googleOAuth.Provider.Csecret,
-		RedirectURL:  googleOAuth.Provider.Callback,
-		Scopes:       googleOAuth.Provider.Scope,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  googleOAuth.Provider.AuthURL,
-			TokenURL: googleOAuth.Provider.TokenURL,
-		},
-	}
-}
-
 type OAuthService struct {
-	oauthService map[string]IOAuthService
+	clientRepo    *Domain.ClientRepo
+	queryRepo     *Domain.QueryOAuthRepo
+	tokenService  *UserTokenService
+	codeOauthRepo *Domain.CodeOauthRepo
 }
 
-func (service *OAuthService) AddService(provider IOAuthService, name string) {
-	service.oauthService[name] = provider
+func (oauth *OAuthService) OAuthClientService(context echo.Context) error {
+	var queryOauthCode = base64.RawURLEncoding.EncodeToString([]byte(uuid.NewRandom()))
+	queryOauth := new(Dtos.QueryOAuthDto)
+	err := context.Bind(queryOauth)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err)
+	}
+	err = context.Validate(queryOauth)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err)
+	}
+	client := new(Model.Client)
+	oauth.clientRepo.FindOne(queryOauth.ClientId, client)
+	if !Common.StringContains(client.CallBack, queryOauth.CallBack) {
+		return context.JSON(http.StatusBadRequest, "Callback url not map")
+	}
+	if queryOauth.ResponseType != "code" {
+		return context.JSON(http.StatusBadRequest, "ResponseType not right")
+	}
+	queryEntity := new(Model.QueryOauth)
+	Common.MapObject(queryOauth, queryEntity)
+	queryEntity.Query = queryOauthCode
+	queryEntity.ClientId = client.ID
+	queryEntity.ResponseType = "code"
+	err = oauth.queryRepo.Create(queryEntity)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	return context.JSON(http.StatusOK, queryEntity.Query)
 }
 
-func (service *OAuthService) GetService(providerName string) IOAuthService {
-	return service.oauthService[providerName]
+func (oauth *OAuthService) OAuthUserService(context echo.Context) error {
+	identityDto := new(Dtos.IdentityOAuthDto)
+	err := context.Bind(identityDto)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	err = context.Validate(identityDto)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	query := new(Model.QueryOauth)
+	err = oauth.queryRepo.FindQueryByQuery(identityDto.QueryCode, query)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	oauth.queryRepo.DeleteQueryByQueryString(query.Query)
+	codeOAuth := new(Model.CodeOauth)
+	Common.MapObject(query, codeOAuth)
+	switch identityDto.TypeOAuth {
+	case "accesstoken":
+		accessTokenDto := new(Dtos.IdentityOAuthWithAccessTokenDto)
+		Common.MapObject(identityDto, accessTokenDto)
+		user, err := oauth.tokenService.CheckAccessTokenFromOAuthService(accessTokenDto)
+		if err != nil {
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		codeOAuth.UserId = user.ID
+		codeOAuth.CodeOauth = Common.RandToken()
+		oauth.codeOauthRepo.Create(codeOAuth)
+		return context.JSON(http.StatusOK, fmt.Sprintf("%s?state=%scode=%s", codeOAuth.CallBack, codeOAuth.State, codeOAuth.CodeOauth))
+	case "username":
+		userNameDto := new(Dtos.IdentityOAuthWithUsernameDto)
+		Common.MapObject(identityDto, userNameDto)
+		user, err := oauth.tokenService.CheckUserSecurityInfo(userNameDto)
+		if err != nil {
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		codeOAuth.UserId = user.ID
+		codeOAuth.CodeOauth = Common.RandToken()
+		oauth.codeOauthRepo.Create(codeOAuth)
+		return context.JSON(http.StatusOK, fmt.Sprintf("%s?state=%s&code=%s", codeOAuth.CallBack, codeOAuth.State, codeOAuth.CodeOauth))
+	default:
+		return context.JSON(http.StatusBadRequest, "invalide type oauth")
+	}
 }
 
 func NewOAuthService() *OAuthService {
-	providerRepo := Domain.NewProviderRepo()
-	userRepo = Domain.NewUserRepo()
-	tokenRepo = Domain.NewTokenOauthRepo()
-	serviceLocator = NewServiceLocateForStorageData()
 	service := new(OAuthService)
-	service.oauthService = make(map[string]IOAuthService)
-	providerList := new([]Model.Provider)
-	providerRepo.Find(providerList)
-	for _, providerConf := range *providerList {
-		provider := new(ProviderAuth)
-		provider.InitialFunc(providerConf)
-		service.AddService(provider, providerConf.Name)
-	}
+	service.queryRepo = Domain.NewQueryOAuthRepo()
+	service.clientRepo = Domain.NewClientRepo()
+	service.tokenService = NewUserTokenService()
+	service.codeOauthRepo = Domain.NewCodeOauthRepo()
 	return service
 }

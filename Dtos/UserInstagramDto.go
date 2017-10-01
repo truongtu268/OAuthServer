@@ -20,6 +20,7 @@ func (github *UserInstagramDto) MapperDto2Entity() Model.IEntity {
 		Model.UserSecurityInfo{
 			Username:       github.Username,
 			IdFromProvider: github.Id,
+			ProviderLogin:  "instagram",
 		},
 	}
 	return user

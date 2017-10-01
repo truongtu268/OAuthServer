@@ -3,5 +3,5 @@
   "user": "postgres",
   "dbname": "testORM",
   "password": "truongtu268",
-  "migrate": "drop"
+  "migrate": "save"
 }

@@ -19,22 +19,6 @@ func (userRepo *EntityRepository) Create(user Model.IEntity) error {
 	return nil
 }
 
-func (useRepo *EntityRepository) Delete(id string, user Model.IEntity) error {
-	dbResult := useRepo.db.Where("id=?", id).Delete(user)
-	if dbResult.Error != nil {
-		return dbResult.Error
-	}
-	return nil
-}
-
-func (userRepo *EntityRepository) FindOne(id string, user Model.IEntity) error {
-	dbResult := userRepo.db.Where("id=?", id).First(user)
-	if dbResult.Error != nil {
-		return dbResult.Error
-	}
-	return nil
-}
-
 func (userRepo *EntityRepository) InitialRepo(entity Model.IEntity, migrate string) {
 	userRepo.db = GetInstance()
 	userRepo.entity = entity

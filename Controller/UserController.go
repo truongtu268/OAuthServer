@@ -6,7 +6,7 @@ import (
 	"github.com/truongtu268/OAuthServer/Middleware"
 )
 
-var oauthService *Service.OAuthService
+var oauthService *Service.ProviderService
 var state string
 var usersControllerItem = []ControllerItem{
 	ControllerItem{
@@ -57,12 +57,28 @@ var usersControllerItem = []ControllerItem{
 			return githubProvider.LoginFunc(context)
 		},
 	},
+	ControllerItem{
+		Url:    "auth/internal",
+		Method: "Get",
+		HandlerFunc: func(context echo.Context) error {
+			githubProvider := oauthService.GetService("internal")
+			return githubProvider.OAuthFunc(context)
+		},
+	},
+	ControllerItem{
+		Url:    "login/internal",
+		Method: "Get",
+		HandlerFunc: func(context echo.Context) error {
+			githubProvider := oauthService.GetService("internal")
+			return githubProvider.LoginFunc(context)
+		},
+	},
 }
 
-func NewOAuthController(e *echo.Echo, validatorLocate *NewMiddleware.ValidatorLocate) *EntityController {
+func NewUserController(e *echo.Echo, validatorLocate *NewMiddleware.ValidatorLocate) *EntityController {
 	entityCtrl := new(EntityController)
 	entityCtrl.intialEntityController(e, "user", validatorLocate)
-	oauthService = Service.NewOAuthService()
+	oauthService = Service.NewProviderService()
 
 	for _, ctrlItem := range usersControllerItem {
 		entityCtrl.AddCtrlItem(ctrlItem)

@@ -8,15 +8,15 @@ import (
 )
 
 type Client struct {
-	ID          string         `gorm:"primary_key;"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   *time.Time
-	Secret      string
-	TrustLevel  string
-	CallBack    pq.StringArray `gorm:"type:varchar(64)[]"`
-	Scope       pq.StringArray `gorm:"type:varchar(64)[]"`
-	UserCreate  User
+	ID         string         `gorm:"primary_key;"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  *time.Time
+	Secret     string
+	TrustLevel string
+	CallBack   pq.StringArray `gorm:"type:varchar(64)[]"`
+	Scope      pq.StringArray `gorm:"type:varchar(64)[]"`
+	UserCreate User
 }
 
 func (entity *Client) BeforeCreate(scope *gorm.Scope) error {

@@ -40,6 +40,10 @@ func (service *UserTokenService) CheckUserSecurityInfo(dto *Dtos.IdentityOAuthWi
 	if err != nil {
 		return nil, err
 	}
+	token := new(Model.TokenOauth)
+	token.UserTokRefer = user.ID
+	token.TokenType = "code"
+	service.tokenRepo.Create(token)
 	return user, nil
 }
 

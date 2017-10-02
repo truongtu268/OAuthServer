@@ -3,7 +3,6 @@ package Controller
 import (
 	"github.com/truongtu268/OAuthServer/Middleware"
 	"github.com/labstack/echo"
-	"net/http"
 	"github.com/truongtu268/OAuthServer/Service"
 )
 
@@ -25,9 +24,9 @@ var oauthCotrollerItem = []ControllerItem{
 	},
 	ControllerItem{
 		Url:    "access_token",
-		Method: "Get",
+		Method: "Post",
 		HandlerFunc: func(context echo.Context) error {
-			return context.JSON(http.StatusOK, "token access")
+			return service.OAuthGetToken(context)
 		},
 	},
 }

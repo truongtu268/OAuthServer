@@ -52,6 +52,13 @@ func (tokenRepo *TokenOauthRepo) RefreshAccessToken(refreshToken string, token *
 	return dbUpdateTokenResult.Error
 }
 
+func (repo *TokenOauthRepo)FindTokenByUserId(userId string, token *Model.TokenOauth) error {
+	dbFindTokenByUserIdResult := repo.db.Where(Model.TokenOauth{
+		UserTokRefer:userId,
+	}).First(&token)
+	return dbFindTokenByUserIdResult.Error
+}
+
 func NewTokenOauthRepo() *TokenOauthRepo {
 	var repo = new(TokenOauthRepo)
 	repo.InitialRepo(new(Model.TokenOauth), "")

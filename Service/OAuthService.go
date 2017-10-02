@@ -96,6 +96,27 @@ func (oauth *OAuthService) OAuthUserService(context echo.Context) error {
 	}
 }
 
+func (oauth *OAuthService) OAuthGetToken(context echo.Context) error {
+	code := context.FormValue("code")
+	codeOauth := new(Model.CodeOauth)
+	err := oauth.codeOauthRepo.FindQueryByQuery(code,codeOauth)
+	if err != nil {
+		return context.JSON(http.StatusNotFound, err.Error())
+	}
+	token := new(Model.TokenOauth)
+	err = oauth.tokenService.tokenRepo.FindTokenByUserId(codeOauth.UserId,token)
+	if err != nil {
+		return context.JSON(http.StatusNotFound, err.Error())
+	}
+	fmt.Println(token)
+	tokenDto:= new(Dtos.TokenDto)
+	tokenDto.TokenType = token.TokenType
+	tokenDto.AccessToken = token.AccessToken
+	tokenDto.RefreshToken = token.RefreshToken
+	tokenDto.Expiry = token.Expiry
+	return context.JSON(http.StatusOK,tokenDto)
+}
+
 func NewOAuthService() *OAuthService {
 	service := new(OAuthService)
 	service.queryRepo = Domain.NewQueryOAuthRepo()

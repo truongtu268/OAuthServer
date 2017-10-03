@@ -7,6 +7,7 @@ import (
 	"github.com/truongtu268/OAuthServer/Model"
 	"net/http"
 	"github.com/truongtu268/OAuthServer/Common"
+	"fmt"
 )
 
 var serviceLocator *StorageUserAndTokenFromProviderService
@@ -31,6 +32,7 @@ func (googleOAuth *ProviderAuth) OAuthFunc(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	err, user := serviceStorage.CreateDataUserAndTokenToDataBase(googleOAuth, code, userRepo, tokenRepo)
+	fmt.Println(user);
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}

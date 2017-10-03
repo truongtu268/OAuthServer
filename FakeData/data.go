@@ -7,7 +7,7 @@ var Providers = []Model.Provider{
 		Name:     "google",
 		Cid:      "251196717827-4oh8dp23ftu0555b905n0coa08lua1km.apps.googleusercontent.com",
 		Csecret:  "CWeUqK2JHs_-MefG1A4kG7vt",
-		Callback: "http://127.0.0.1:9090/user/auth/google",
+		Callback: "http://127.0.0.1:3000/oauth/google",
 		Scope: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 		},
@@ -19,7 +19,7 @@ var Providers = []Model.Provider{
 		Name:     "github",
 		Cid:      "7fb34f5e3f8a61d5c148",
 		Csecret:  "f769509e38a4c0200b2bf7fe97e98534c3bac581",
-		Callback: "http://127.0.0.1:9090/user/auth/github",
+		Callback: "http://127.0.0.1:3000/oauth/github",
 		Scope: []string{
 			"user",
 			"publicrepo",
@@ -32,7 +32,7 @@ var Providers = []Model.Provider{
 		Name:     "instagram",
 		Cid:      "cb1d9f05d80e4a2c821c2916499c4b82",
 		Csecret:  "907debf7db834c2594b595de45ae533b",
-		Callback: "http://127.0.0.1:9090/user/auth/instagram",
+		Callback: "http://127.0.0.1:3000/oauth/instagram",
 		Scope: []string{
 			"basic",
 		},
@@ -44,13 +44,13 @@ var Providers = []Model.Provider{
 		Name:     "internal",
 		Cid:      "cb1d9f05d80e4a2c821c2916499c4b8q",
 		Csecret:  "907debf7db834c2594b595de45ae533q",
-		Callback: "http://127.0.0.1:9090/user/auth/local_authorize",
+		Callback: "http://127.0.0.1:3000/oauth/local_authorize",
 		Scope: []string{
 			"basic",
 			"read profile",
 		},
 		Client:   "http://127.0.0.1:9090/private/info",
-		AuthURL:  "http://127.0.0.1:9090/oauth/authorize",
+		AuthURL:  "http://127.0.0.1:3000/oauth/internal",
 		TokenURL: "http://127.0.0.1:9090/oauth/access_token",
 	},
 }
@@ -60,7 +60,7 @@ var Clients = []Model.Client{
 		ID:         "cb1d9f05d80e4a2c821c2916499c4b8q",
 		Secret:     "907debf7db834c2594b595de45ae533q",
 		Scope:      []string{"basic", "read profile"},
-		CallBack:   []string{"http://127.0.0.1:9090/user/auth/local_authorize"},
+		CallBack:   []string{"http://127.0.0.1:3000/oauth/local_authorize"},
 		TrustLevel: "5",
 	},
 }

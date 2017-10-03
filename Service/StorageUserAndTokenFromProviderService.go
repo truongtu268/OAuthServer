@@ -26,6 +26,8 @@ func createUserAndUserSecurityInfo(userDto Dtos.EntityDto) (error, *Dtos.UserDto
 	tokenRepo.FindOrCreateTokenByProviderLogin(tokenEntity)
 	var dto = new(Dtos.UserDto)
 	Common.MapObject(userEntity, dto)
+	dto.AccessToken = tokenEntity.AccessToken
+	dto.RefreshToken = tokenEntity.RefreshToken
 	return nil, dto
 }
 

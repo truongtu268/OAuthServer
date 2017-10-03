@@ -10,4 +10,6 @@ type UserDto struct {
 	Avatar    string
 	Email     string
 	Name      string
+	AccessToken string
+	RefreshToken string
 }

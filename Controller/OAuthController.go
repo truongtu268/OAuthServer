@@ -31,7 +31,7 @@ var oauthCotrollerItem = []ControllerItem{
 	},
 }
 
-func NewOAuthController(e *echo.Echo, validatorLocate *NewMiddleware.ValidatorLocate) *EntityController {
+func NewOAuthController(e *echo.Echo, validatorLocate *NewMiddleware.ValidatorLocate) *EntityController 	{
 	service = Service.NewOAuthService()
 	entityCtrl := new(EntityController)
 	entityCtrl.intialEntityController(e, "oauth", validatorLocate)

@@ -1,6 +1,5 @@
 vendor/
-*.exe
 real_project_runner.conf
-*.conf
 .idea/
 tmp/
+Godeps/

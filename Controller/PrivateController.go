@@ -2,7 +2,7 @@ package Controller
 
 import (
 	"github.com/labstack/echo"
-	"github.com/truongtu268/real_project/Common"
+	"github.com/truongtu268/OAuthServer/Common"
 	"github.com/truongtu268/OAuthServer/Model"
 	"net/http"
 	"github.com/truongtu268/OAuthServer/Middleware"
